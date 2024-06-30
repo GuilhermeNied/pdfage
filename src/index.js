@@ -1,13 +1,20 @@
 import fs from 'node:fs/promises'
 import PDFDocument from 'pdfkit'
-import { createWriteStream } from 'node:fs'
+import { createWriteStream, existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+const isPDFsDirectoryExists = existsSync('pdfs')
+
+if (!isPDFsDirectoryExists) {
+  fs.mkdir('pdfs')
+}
+
 const imgDirPath = path.join(fileURLToPath(import.meta.url), '../../images')
+
 const destinationDirectoryPath = path.join(fileURLToPath(import.meta.url), '../../pdfs')
 
-async function getImagesFiles(filePath) {
+async function getImageFiles(filePath) {
   const files = await fs.readdir(filePath)
   
   files.map((file) => {
@@ -21,7 +28,7 @@ async function getImagesFiles(filePath) {
 }
 
 async function imageToPdf() {
-  const pathFiles = await getImagesFiles(imgDirPath)
+  const pathFiles = await getImageFiles(imgDirPath)
   pathFiles.forEach((file) => {
     const sourceFile = path.join(imgDirPath, file)
     const pdfFileName = `${path.basename(file, path.extname(file))}.pdf`
@@ -30,9 +37,11 @@ async function imageToPdf() {
     const writableStream = createWriteStream(destinationFile)
     doc.pipe(writableStream)
    
-    doc.image(sourceFile, 0, 0, {
+    doc.image(sourceFile, 10, 0, {
       width: 595.28,
-      height: 811.89
+      height: 780,
+      align: 'center',
+      valign: 'center'
     });
 
     doc.end()
