@@ -28,7 +28,6 @@ async function imageToPdf() {
     const sourceFile = path.join(imgDirPath, file)
     const pdfFileName = `${path.basename(file, path.extname(file))}.pdf`
     const destinationFile = path.join(destinationDirectoryPath, pdfFileName)
-    console.log(destinationDirectoryPath)
     const doc = new PDFDocument()
     const writableStream = createWriteStream(destinationFile)
     doc.pipe(writableStream)
