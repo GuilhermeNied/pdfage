@@ -1,12 +1,11 @@
 import fs from 'node:fs/promises'
 import PDFDocument from 'pdfkit'
-import { createWriteStream, createReadStream } from 'node:fs'
+import { createWriteStream } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const imgDirPath = path.join(fileURLToPath(import.meta.url), '../../images')
 const destinationDirectoryPath = path.join(fileURLToPath(import.meta.url), '../../pdfs')
-
 
 async function getImagesFiles(filePath) {
   const files = await fs.readdir(filePath)
@@ -20,7 +19,6 @@ async function getImagesFiles(filePath) {
   
   return files
 }
-
 
 async function imageToPdf() {
   const pathFiles = await getImagesFiles(imgDirPath)
@@ -40,10 +38,9 @@ async function imageToPdf() {
     doc.end()
 
     writableStream.on('error', error => console.error(`Error reading file ${file}`, error))
-    writableStream.on('finish',  () => console.log(`Generated PDF in: ${destinationFile}`))
-
-
   })
 }
 
-imageToPdf()
+imageToPdf().then(() => {
+  console.log('PDFs successfully created')
+})
